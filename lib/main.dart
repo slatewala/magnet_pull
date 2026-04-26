@@ -51,11 +51,19 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
   void initState() {
     super.initState();
     _ticker = createTicker(_tick)..start();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _setup());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_size == Size.zero) {
+      _size = MediaQuery.of(context).size;
+      _setup();
+    }
   }
 
   void _setup() {
-    final s = MediaQuery.of(context).size;
+    final s = _size == Size.zero ? MediaQuery.of(context).size : _size;
     _size = s;
     final cs = [const Color(0xFFFF4D6D), const Color(0xFF4DD0E1), const Color(0xFFFFEA00)];
     _balls = List.generate(_level + 1, (i) {
