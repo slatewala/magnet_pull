@@ -126,12 +126,12 @@ class _GamePageState extends State<GamePage> with SingleTickerProviderStateMixin
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF1A1A2E),
-      body: GestureDetector(
-        onPanStart: (d) => setState(() => _magnet = d.localPosition),
-        onPanUpdate: (d) => setState(() => _magnet = d.localPosition),
-        onPanEnd: (_) => setState(() => _magnet = null),
-        onTapDown: (d) => setState(() => _magnet = d.localPosition),
-        onTapUp: (_) => setState(() => _magnet = null),
+      body: Listener(
+        behavior: HitTestBehavior.opaque,
+        onPointerDown: (e) => setState(() => _magnet = e.localPosition),
+        onPointerMove: (e) => setState(() => _magnet = e.localPosition),
+        onPointerUp: (_) => setState(() => _magnet = null),
+        onPointerCancel: (_) => setState(() => _magnet = null),
         child: Stack(children: [
           CustomPaint(
             size: Size.infinite,
@@ -180,11 +180,21 @@ class _Painter extends CustomPainter {
       c.drawCircle(b.p, 16, Paint()..color = b.color);
     }
     if (magnet != null) {
+      // pulsing rings — high contrast, visible on dark bg
+      c.drawCircle(magnet!, 80,
+          Paint()..color = const Color(0xFFFFFFFF).withOpacity(0.10));
       c.drawCircle(magnet!, 50,
-          Paint()..color = const Color(0xFFFFFFFF).withOpacity(0.08));
-      c.drawCircle(magnet!, 28,
-          Paint()..color = const Color(0xFFFFFFFF).withOpacity(0.18));
-      c.drawCircle(magnet!, 10, Paint()..color = Colors.white);
+          Paint()..color = const Color(0xFFFFFFFF).withOpacity(0.20));
+      c.drawCircle(magnet!, 30,
+          Paint()..color = const Color(0xFFFFFFFF).withOpacity(0.45));
+      c.drawCircle(magnet!, 18, Paint()..color = Colors.white);
+      c.drawCircle(magnet!, 8, Paint()..color = const Color(0xFFFF4D6D));
+      // outer ring outline for clarity
+      c.drawCircle(magnet!, 80,
+          Paint()
+            ..color = Colors.white70
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 2);
     }
   }
 
